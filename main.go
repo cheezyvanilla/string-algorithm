@@ -2,18 +2,21 @@ package main
 
 import (
 	"fmt"
+	"playground/app"
 )
 
 // import "fmt"
 
 func main(){
 	// fmt.Println(isAnagram("kodok", "dokok"))
-	repeatedChar, err := FirstRepeatedChar("ads")
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-	fmt.Println(repeatedChar)
+	// repeatedChar, err := app.FirstRepeatedChar("ads")
+	// if err != nil {
+	// 	fmt.Println(err.Error())
+	// 	return
+	// }
+	// fmt.Println(repeatedChar)
+vow, cons := app.VowelConsonantCounter("aku aku ")
+	fmt.Println(vow != 4 , cons != 2)
 }
 
 func isAnagram(a, b string) bool {
