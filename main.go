@@ -1,11 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // import "fmt"
 
 func main(){
-	fmt.Println(isAnagram("kodok", "dokok"))
+	// fmt.Println(isAnagram("kodok", "dokok"))
+	repeatedChar, err := FirstRepeatedChar("ads")
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Println(repeatedChar)
 }
 
 func isAnagram(a, b string) bool {
