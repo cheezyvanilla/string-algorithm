@@ -1,95 +1,63 @@
-package main
+// package main
 
-import (
-	"fmt"
-	"sync"
-	"time"
-)
+// import (
+// 	"fmt"
+// 	"time"
+// )
 
-//close the shared channel(in this case is 'done' channel) is effectively broadcasting to all pipelines
-//to stop working
+// func main(){
+// 	arr := []int{3,7,5,2}
 
-func main()  {
-	
-	done := make(chan struct{}, 2)
-	defer close(done)
-	
-	timeStart := time.Now()
-	gen := numGen(done, 4,5)
+// 	sorted := sort(arr)
+// 	fmt.Println(sorted)
+// }
 
-	out1 := square(done, gen)
-	out2 := square(done, gen)
-	
-	aggr := merge(done, out1, out2)
-	// for n := range aggr {
-	// 	fmt.Println(n)
-	// }
-	fmt.Println(<-aggr)
+// func sort(n []int)[]int{
+// 	if len(n) == 1{
+// 		return n
+// 	}
 
-	done <- struct{}{}
-	done <- struct{}{}
-	
-	execTime := time.Now().Sub(timeStart)
-	fmt.Println(execTime)
-}
+// 	arr1 := n[0:(len(n)/2)]
+// 	arr2 := n[(len(n)/2):len(n)]
 
-func numGen(done <-chan struct{}, nums ...int) <-chan int{
-	out := make(chan int)
-	go func(){ 
-		defer close(out) 
-		for _, num := range nums{
-			select{
-			case out <- num:
-			case <-done:
-				return
-			}
-		}
-	}()
+// 	arr1 = sort(arr1)
+// 	arr2 = sort(arr2)
 
-	return out
-} 
+// 	return merge(arr1, arr2)
 
-func square(done <-chan struct{}, num <-chan int) <-chan int{
-	out := make(chan int)
+// }
 
-	go func(){
-		for v := range num{
-			select{
-			case out <- v * v:
-			case <-done:
-				return
-			}	
-		}
-		close(out)
-	}()
+// func merge(n1, n2 []int) []int{
+// 	totalLength := len(n1) + len(n2)
+// 	n := make([]int, totalLength)
 
-	return out
-}
+// 	i := 0
+// 	for len(n1) > 0 && len(n2) > 0 {
+// 		if n1[0] > n2[0]{
+// 			n[i] = n2[0]
+// 			n2 = n2[1:]
+// 		}else{
+// 			n[i] = n1[0]
+// 			n1 = n1[1:]
+// 		}
+// 		fmt.Println(n, n1, n2)
+// 		i++
+// 	}
 
-func merge(done <-chan struct{}, chans ...<-chan int) <-chan int{
-	var wg sync.WaitGroup
-	out := make(chan int, 1)
+// 	for len(n1) > 0 {
+// 		n[i] = n1[0]
+// 		n1 = n1[1:]
+// 	}
 
-	output := func(n <-chan int) {
-		defer wg.Done()
-		for num := range n{
-			select {
-			case out <- num:
-			case <-done:
-				return
-			}
-		}
-	}
+// 	for len(n2) > 0 {
+// 		n[i] = n2[0]
+// 		n2 = n2[1:]
+// 	}
 
-	wg.Add(len(chans))
-	
-	for _, c := range chans{
-		go output(c)
-	}
+// 	return n
+// }
 
-	go func(){
-		wg.Wait()
-		close(out)
-	}()
-	return out
-}
+// type test struct{
+// 	name string
+// 	mulai time.Time
+// }
